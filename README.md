@@ -263,7 +263,7 @@ The table below summarizes the main ablation across model architectures while ke
   - The greater expressivity of the LSTM cell,
   - The additional depth (two LSTM layers),
   - Better ability to capture complex temporal dynamics in the fMRI time series.
-- However, because the dataset is tiny, the high scores for the LSTM may partly reflect **overfitting**; this should be discussed in the assignment write-up.
+- However, because the dataset is tiny, the high scores for the LSTM may partly reflect **overfitting**.
 
 ---
 
@@ -336,7 +336,6 @@ The script will:
   For the assignment report, you may also want:
   - ROC curves / AUC
   - Per-fold subject-level prediction tables
-  - Discussion of failure modes seen in confusion matrices.
 
 ---
 
