@@ -1,4 +1,4 @@
-# AD vs CN Classification from fMRI Time Series  
+# RNN for AD classification using fMRI signal  
 *CSE 6389 – Programming Assignment 3*
 
 This project implements and compares two recurrent neural network approaches for **Alzheimer’s Disease (AD) vs Cognitively Normal (CN)** classification from resting-state fMRI time series:
