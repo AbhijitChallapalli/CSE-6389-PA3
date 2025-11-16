@@ -1,5 +1,5 @@
 # AD vs CN Classification from fMRI Time Series  
-*CSE 6389 – Advanced Medical Imaging & Graphs – Programming Assignment 3*
+*CSE 6389 – Programming Assignment 3*
 
 This project implements and compares two recurrent neural network approaches for **Alzheimer’s Disease (AD) vs Cognitively Normal (CN)** classification from resting-state fMRI time series:
 
@@ -40,7 +40,7 @@ The code assumes the following dataset organization under `DATA_ROOT = "./"`:
     - `raw_fmri_feature_matrix_2.txt`
     - …
 - Each `raw_fmri_feature_matrix_*.txt` file stores a **vector of ROI features** for one time point
-  (flattened to shape `(R,)`, where `R = 150` ROIs in this assignment).
+  (flattened to shape `(R,)`, where `R = 150`).
 
 The loader:
 
@@ -210,26 +210,6 @@ This ensures each fold’s reported metrics correspond to the epoch where the mo
 
 For every fold, a **confusion matrix heatmap** is generated and saved:
 
-```python
-fig, ax = plt.subplots(figsize=(6, 5))
-sns.heatmap(
-    best_metrics["confusion_matrix"],
-    annot=True,
-    fmt="d",
-    cmap="mako",
-    cbar=False,
-    ax=ax,
-    xticklabels=["CN", "AD"],
-    yticklabels=["CN", "AD"],
-)
-ax.set_xlabel("Predicted")
-ax.set_ylabel("True")
-ax.set_title(f"Confusion Matrix — Fold {fold_idx}")
-plt.tight_layout()
-plt.savefig(f"cm_{model_type}_fold_{fold_idx}.png", dpi=200)
-plt.close(fig)
-```
-
 - Files are saved as:
   - `cm_minimalrnn_fold_1.png`, …, `cm_minimalrnn_fold_5.png`
   - `cm_lstm_fold_1.png`, …, `cm_lstm_fold_5.png`
@@ -276,7 +256,7 @@ The table below summarizes the main ablation across model architectures while ke
 | A         | MinimalRNN  | Yes                      | 64                | 0.600 ± 0.122          | 0.633 ± 0.194           | 0.800 ± 0.245        | 0.660 ± 0.095    | Simpler recurrent cell, fewer gates |
 | B         | LSTM (Li)   | Yes                      | 64 → 32 (2-layer) | 0.900 ± 0.200          | 0.900 ± 0.200           | 1.000 ± 0.000        | 0.933 ± 0.133    | Higher capacity, stacked LSTMs      |
 
-**Observations (for report):**
+**Observations:**
 
 - Moving from MinimalRNN (Variant A) to a stacked LSTM (Variant B) substantially increases accuracy and F1 on this small dataset.
 - Both models use the same **sliding-window augmentation** and **subject-level aggregation**, so the performance gain is attributable mainly to:
@@ -287,31 +267,7 @@ The table below summarizes the main ablation across model architectures while ke
 
 ---
 
-## 7. Code Structure
-
-Main file:
-
-- **`train.py`**  
-  - Data loading & z-scoring (`load_all_subjects`, `zscore_subject`)
-  - Sliding-window dataset (`SlidingWindowDataset`)
-  - Models (`MinimalRNN_AD_Classifier`, `LSTM_AD_Classifier`)
-  - Training utility (`train_one_epoch`)
-  - Subject-level evaluation (`evaluate_subject_level`)
-  - K-fold orchestration (`run_kfold`)
-  - Main script:
-    - Loads data
-    - Runs:
-      - MinimalRNN cross-validation
-      - LSTM cross-validation
-
-Output:
-
-- Console logs for each fold and epoch.
-- Confusion matrices per fold saved as `.png`.
-
----
-
-## 8. Dependencies
+## 7. Dependencies
 
 Recommended environment:
 
@@ -328,15 +284,26 @@ You can install requirements via:
 ```bash
 pip install numpy torch scikit-learn matplotlib seaborn
 ```
-
 ---
 
-## 9. How to Run
+## 8. Code Structure
 
-1. Place the data in the directory structure described in Section 1.
-2. Ensure you are in the project root (where `train.py` is located).
-3. Run:
+Main file:
 
+- **`train.py`**  
+  - Data loading & z-scoring (`load_all_subjects`, `zscore_subject`)
+  - Sliding-window dataset (`SlidingWindowDataset`)
+  - Models (`MinimalRNN_AD_Classifier`, `LSTM_AD_Classifier`)
+  - Training utility (`train_one_epoch`)
+  - Subject-level evaluation (`evaluate_subject_level`)
+  - K-fold orchestration (`run_kfold`)
+  - Main script:
+    - Loads data
+    - Runs:
+      - MinimalRNN cross-validation
+      - LSTM cross-validation
+
+How to run:
 ```bash
 python train.py
 ```
@@ -353,7 +320,7 @@ The script will:
 
 ---
 
-## 10. Notes & Possible Extensions
+## 9. Notes & Possible Extensions
 
 - **Reproducibility:**  
   The seed is fixed (`SEED = 42`) for `numpy`, `random`, and `torch` to help reproduce results.
@@ -373,16 +340,10 @@ The script will:
 
 ---
 
-## 11. Summary (for Assignment Write-Up)
+## 10. References
+"Li, H., & Fan, Y. (2019). Interpretable, highly accurate brain decoding of subtly distinct brain states "
+"from functional MRI using intrinsic functional networks and long short-term memory recurrent neural networks. "
+"NeuroImage, 202, 116059.",
 
-This project demonstrates:
-
-- How to convert raw fMRI time-series (per-time-point ROI vectors) into an input suitable for RNNs.
-- How to implement and train two different recurrent architectures for AD vs CN classification:
-  - MinimalRNN (Nguyen-style)
-  - Stacked LSTM (Li-style)
-- How to apply **sliding-window augmentation** to increase the effective number of training sequences.
-- How to perform **subject-level cross-validated evaluation** and visualize confusion matrices.
-- How simple architectural ablations (MinimalRNN vs stacked LSTM) impact performance on the same fMRI dataset.
-
-The provided implementation and results can be directly used as the basis for the assignment report, with added interpretation and comparison of MinimalRNN vs LSTM behavior on this small fMRI dataset.
+"Nguyen, M., Sun, N., Alexander, D.C., Feng, J., & Yeo, B.T.T. (2020). Predicting Alzheimer’s disease "
+"progression using deep recurrent neural networks. NeuroImage, 222, 117203."
